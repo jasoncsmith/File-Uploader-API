@@ -1,0 +1,140 @@
+@-webkit-keyframes fadeInFromNone {
+	0% {
+		display: none;
+		opacity: 0;
+	}
+
+	1% {
+		display: block;
+		opacity: 0;
+	}
+
+	100% {
+		display: block;
+		opacity: 1;
+	}
+}
+
+@-moz-keyframes fadeInFromNone {
+	0% {
+		display: none;
+		opacity: 0;
+	}
+
+	1% {
+		display: block;
+		opacity: 0;
+	}
+
+	100% {
+		display: block;
+		opacity: 1;
+	}
+}
+
+@keyframes fadeInFromNone {
+	0% {
+		display: none;
+		opacity: 0;
+	}
+
+	1% {
+		display: block;
+		opacity: 0;
+	}
+
+	100% {
+		display: block;
+		opacity: 1;
+	}
+}
+
+@mixin toggleFadeWithOpacity($duration: 0.5s) {
+	-webkit-animation: fadeInFromNone $duration ease-in;
+	-moz-animation: fadeInFromNone $duration ease-in;
+	animation: fadeInFromNone $duration ease-in;
+}
+
+@mixin scroll-bar-style () {
+	// firefox	
+	scrollbar-color: #333;
+	scrollbar-width: thin;
+	  
+	// chrome
+	&::-webkit-scrollbar {
+		height: 4px;
+		width: 6px;
+		cursor: pointer;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: #f7f7f7;
+		cursor: pointer;
+	}
+
+	// Handle
+	&::-webkit-scrollbar-thumb {
+		background: #BBB;
+		border-radius: 10px;
+		cursor: pointer;
+	}
+
+	&::-webkit-scrollbar-thumb:window-inactive {
+		background: #CCC;
+		cursor: pointer;
+	}
+
+}
+
+@mixin box-shadow($shadow1, $shadow2: false, $shadow3: false, $shadow4: false, $shadow5: false) {
+	$params: $shadow1;
+
+	@if $shadow2 {
+		$params: $shadow1, $shadow2;
+	}
+
+	@if $shadow3 {
+		$params: $shadow1, $shadow2, $shadow3;
+	}
+
+	@if $shadow4 {
+		$params: $shadow1, $shadow2, $shadow3, $shadow4;
+	}
+
+	@if $shadow5 {
+		$params: $shadow1, $shadow2, $shadow3, $shadow4, $shadow5;
+	}
+
+	-webkit-box-shadow: $params;
+	-moz-box-shadow: $params;
+	box-shadow: $params;
+}
+
+@mixin box-sizing {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box; //  Opera/IE 8+
+}
+
+@mixin transition($duration: 0.2s) {
+	-moz-transition: all $duration ease-in-out; // Firefox
+	-webkit-transition: all $duration ease-in-out; // Webkit (Safari, Chrome, other)
+	transition: all $duration ease-in-out;
+}
+
+@mixin strip-default-button-styles() {
+	outline: none;
+	border: none;
+	background-color: rgba(0,0,0,0);
+}
+
+@mixin strip-default-select-box-styles() {
+	background-color: #FFF;
+	outline: none;
+}
+
+@mixin strip-default-button-styles() {
+	outline: none;
+	border: none;
+	background-color: rgba(0,0,0,0);
+}

@@ -1,0 +1,157 @@
+@use '../../styles/app';
+@use '../../styles/mixins';
+@use '../../styles/colors';
+
+.file-upload {
+    width: 650px;
+    margin: 0 auto;
+}
+
+.file-upload__title {
+    font-size: 18px;
+    line-height: 1;
+    font-weight: bold;
+    color: #555;
+}
+
+.file-upload__input-file {
+    display: none;
+}
+
+.file-upload__drop-area {
+    position: relative;
+    padding: 35px 0;
+    border: 3px dashed #ccc;
+    background: #f9f9f9;
+    text-align: center;
+    border-radius: 3px;
+    @include mixins.transition(app.$buttonFadeDuration);
+}
+
+.file-upload__drop-area--is-dragover {
+    border-color: colors.$buttonBlue;
+    transform: scale(1.015);
+    .file-upload__title{
+        color: colors.$buttonBlue;
+    }
+}
+
+.file-upload__text-extensions {
+    padding: 4px 0;
+    text-align: center;
+    color:#999;
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 1.2;
+}
+
+.file-upload__image-preview {
+    display: none;
+    position: absolute;
+    z-index: app.$Z_INDEX_PAGE_VIEW;
+    top: 35px;
+    left: 0;
+    background: #FFF;
+    border: 1px solid #000;
+    border-radius: 3px;
+    @include mixins.box-shadow(5px 5px 3px rgba(0,0,0,0.2));
+    @include mixins.toggleFadeWithOpacity(0.3s);
+    
+    img {
+        height: 100px;
+    }
+}
+
+.file-upload__label-input-file {
+    display: inline-block;
+    font-size: 16px;
+    @include mixins.transition(0.1s);
+}    
+
+.file-upload__label-input-file:hover {
+    scale: 1.05;
+}
+
+.file-upload__label-input-file:hover .label-input-file__icon{
+    color: #FFF;
+}
+
+.file-upload__file-list {
+    padding: 10px;
+}
+
+.file-list-item {
+    display: flex;
+    position: relative;
+    align-items: center;
+    padding: 0;
+    margin-bottom: 2px;
+}
+
+.file-list-item__name {
+    max-width: 100%;
+    color: #000;
+    font-size: 15px;
+    display: inline-block;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.file-list-item__size {
+    display: inline-block;
+    width: 75px;
+    text-align: center;
+    color: #555;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+.file-list-item__btn-delete {
+    @include mixins.strip-default-button-styles();
+    display: inline-block;
+    font-size: 18px;
+    margin: 0 0 0 0;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    background-color: transparent;
+    text-align: center;
+    font-weight: normal;
+    color: colors.$errorRed;
+    cursor: pointer;
+    border-radius: 3px;
+
+    &:hover {
+        background-color: red;
+        color: #fff;
+    }
+}
+
+.file-list-item__block {
+    display: inline-block;
+    max-width: calc(100% - 100px);
+}
+
+.file-list-item__block:hover .file-upload__image-preview {
+    display: block;
+}
+
+.file-upload__send {
+    padding-left: 40px;
+    padding-right: 40px;
+    font-size: 16px;
+}
+
+.label-input-file__icon {
+    display: inline-block;
+    margin-left: 8px;
+    color: #aabed0;
+    @include mixins.transition(0.1s);
+}
+
+.or {
+    line-height: 1;
+    padding: 20px 0;
+}

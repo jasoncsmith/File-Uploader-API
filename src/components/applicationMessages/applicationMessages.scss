@@ -1,0 +1,58 @@
+@use '../../styles/app';
+@use '../../styles/mixins';
+@use '../../styles/colors';
+
+#application-messaging {
+    position: fixed;
+    bottom: 50px;
+    right: 100px;
+    width: 325px;
+    z-index: calc(app.$Z_INDEX_MODAL + 1);
+
+    .message {
+        display: flex;
+        position: relative;
+        opacity: 1;
+        margin: 0 0 20px;
+        border: 1px solid #555;
+        @include mixins.box-shadow(7px 8px 6px rgba(0, 0, 0, 0.3));
+        @include mixins.transition(300ms);
+    }
+
+    .message--is-invalid {
+        background: colors.$errorRed;
+        color:#FFF;
+    }
+
+    .message--is-valid {
+        background: #044b02;
+        color:#FFF;
+    }
+
+    .message__content {
+        width: 90%;
+        max-height: 150px;
+        overflow-y: auto;        
+        word-wrap: break-word;
+        padding: 15px;
+        font-size: 14px;
+        line-height: 1.3;
+
+        @include mixins.scroll-bar-style();
+    }
+
+    .message__remove-item {
+        width: 10%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #FFF;
+        font-size: 24px;
+        cursor: pointer;
+        background: rgba(0,0,0,0.03);
+
+        &:hover {
+            color: #FFF;
+        }
+    }
+}
