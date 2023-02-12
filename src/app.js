@@ -26,7 +26,7 @@ export default function appLaunch() {
 
         appMessagesApi.initialize();
         
-        ko.applyBindings(appMessagesApi, el)
+        ko.applyBindings(appMessagesApi, el);
     });
 
 
@@ -61,4 +61,4 @@ export default function appLaunch() {
 
         ko.applyBindings(fileUploaderApi, el);
     });
-};
+}

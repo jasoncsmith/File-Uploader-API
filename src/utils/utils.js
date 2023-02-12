@@ -43,7 +43,7 @@ export function injectDynamicImportHtmlIntoDom(args) {
     // const frag = document.createRange().createContextualFragment(args.html);
     // cant use above cuz cant apply bindings to a fragment :(
 
-    const node = args.parentNode === void 0 ? elAppBody : args.parentNode;
+    const node = args.parentNode === void 0 ? document.body : args.parentNode;
     const el = document.createElement('div');
 
     el.innerHTML = args.html;

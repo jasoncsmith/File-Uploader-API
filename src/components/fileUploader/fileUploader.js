@@ -11,16 +11,16 @@ import {
 } from '../../utils/utilsNumber.js';
 import DOMPurify from 'dompurify';
 
-const hashSupportedExtToMIMEImage = {
-    jpg: 'image/jpeg',
-    jpeg: 'image/jpeg',
-    png: 'image/png',
-    gif: 'image/gif',
-    tif: 'image/tiff',
-    tiff: 'image/tiff',
-    bmp: 'image/bmp',
-    pdf: 'application/pdf'
-};
+// const hashSupportedExtToMIMEImage = {
+//     jpg: 'image/jpeg',
+//     jpeg: 'image/jpeg',
+//     png: 'image/png',
+//     gif: 'image/gif',
+//     tif: 'image/tiff',
+//     tiff: 'image/tiff',
+//     bmp: 'image/bmp',
+//     pdf: 'application/pdf'
+// };
 
 
 const whiteList = [];
@@ -369,8 +369,7 @@ export default function () {
         self.isWaiting(false);
     };
 
-    this.uploadFile = function (args) {
-        args = args || {};
+    this.uploadFile = function () {
         const uploads = [];
 
         if (queuedFileTransfers.length === 0) {
@@ -392,7 +391,7 @@ export default function () {
                 });
                 self.isWaiting(false);
             })
-            .finally(self.reset)
+            .finally(self.reset);
 
     };
 
