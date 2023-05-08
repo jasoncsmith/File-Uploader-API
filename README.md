@@ -11,6 +11,9 @@ A simple cross-browser file uploader API that removes the idiosyncrosies of the 
 5. Command Prompt > npm run build
 6. Right click index.html and open with browser
 
+## To View
+copy and paste: https://jasoncsmith.github.io/File-Uploader-API/ into your favorite browser.
+
 ## Features
 - Dynamically imported components
 - Allows unlimited interfaces per view
