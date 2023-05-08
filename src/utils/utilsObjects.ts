@@ -7,6 +7,6 @@
 * @param object source
 * @return object merged target/source
 */
-export function objMerge(target, source) {
+export function objMerge(target: object, source: object): object {
     return Object.assign(target, source);
 }

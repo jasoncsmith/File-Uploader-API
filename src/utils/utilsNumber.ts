@@ -1,4 +1,4 @@
-export function formatBytes(bytes) {
+export function formatBytes(bytes: number): string {
 /* 
 It's convenient within the computer to organize things in groups of powers of
 2. For example, 2^10 is 1024, and so a program might group 1024 items 
@@ -12,8 +12,8 @@ interpretation, since it makes their hard drives etc. appear to hold a little
 bit more.
 https://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
 */
-    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    let i;
+    const units: string[] = ['B', 'KB', 'MB', 'GB', 'TB'];
+    let i: number;
  
     for (i = 0; bytes >= 1024 && i < 4; i++) {
         bytes /= 1024;

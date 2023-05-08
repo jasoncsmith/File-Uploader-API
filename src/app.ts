@@ -1,63 +1,66 @@
 import 'knockout-postbox';
 
 import {
-    injectDynamicImportHtmlIntoDom,
-    fetchComponent
-} from './utils/utils.js';
+    injectDynamicImportHtmlIntoDom
+} from './utils/utils.ts';
+import {
+    IFileUploaderOptions,
+    IDynamicImportHtml
+} from "./components/interfaces.ts";
 
-export default function appLaunch() {
-    fetchComponent({
-        filePath: () => import(
+export default function appLaunch(): void {
+    Promise.all([
+        import(
             /* webpackChunkName: "applicationMessages_js" */
-            './components/applicationMessages/applicationMessages.js'
+            './components/applicationMessages/applicationMessages'
         ),
-        filePathTemplate: () => import(
+        import(
             /* webpackChunkName: "applicationMessages_html" */
             './components/applicationMessages/applicationMessages.html'
         )
-    }).then(arr => {
+    ]
+    ).then((arr) => {
         const appMessagesApi = arr[0].default();
-        const html = arr[1].default;
+        const html: string = arr[1].default;
 
-        const el = injectDynamicImportHtmlIntoDom({
+        const el: HTMLElement = injectDynamicImportHtmlIntoDom({
             parentNode: document.querySelector('.app'),
             html: html
-        });
+        } as IDynamicImportHtml);
 
         appMessagesApi.initialize();
-        
+
         ko.applyBindings(appMessagesApi, el);
     });
 
-
-    fetchComponent({
-        filePath: () => import(
+    Promise.all([
+        import(
             /* webpackChunkName: "fileUploader_js" */
-            './components/fileUploader/fileUploader.js'
+            './components/fileUploader/fileUploader'
         ),
-        filePathTemplate: () => import(
+        import(
             /* webpackChunkName: "fileUploader_html" */
             './components/fileUploader/fileUploader.html'
         )
-    }).then(arr => {
+    ]).then(arr => {
         const fileUploaderApi = new arr[0].default();
-        const html = arr[1].default;
+        const html: string = arr[1].default;
 
-        const el = injectDynamicImportHtmlIntoDom({
+        const el: HTMLElement = injectDynamicImportHtmlIntoDom({
             parentNode: document.querySelector('.app__content'),
             html: html
-        });
+        } as IDynamicImportHtml);
 
         fileUploaderApi.initialize({
             el,
-            endpoint: data => Promise.resolve(data), // noop
+            endpoint: (data: string): object => Promise.resolve(data), // noop
             allowsMultiple: true,
             validatePlainTextContent: true,
             maxFileSize: 5242880, // 1mb = 1024 * 1024 bytes,
             allowedExtensions: ['.txt', '.jpg'],
             labelText: 'Drop file(s) here',
             labelButton: 'Choose file'
-        });
+        } as IFileUploaderOptions);
 
         ko.applyBindings(fileUploaderApi, el);
     });

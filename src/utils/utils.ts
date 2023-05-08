@@ -1,21 +1,8 @@
-export function jDefer() {
-    // JCS: 08/21/2020
-    // pull out scope
-    var fnComplete, fnReject;
-    // must have a 'then'  if complete
-    // must have a 'catch' if failed
-    var promise = new Promise((complete, failed) => {
-        fnComplete = complete;
-        fnReject = failed;
-    });
+import {
+    IDynamicImportHtml
+} from "../components/interfaces.ts";
 
-    promise.complete = fnComplete;
-    promise.failed = fnReject;
-
-    return promise;
-}
-
-export function containsIllegalfileNameChars(str) {
+export function containsIllegalfileNameChars(str: string): boolean {
     if (typeof str !== 'string') {
         return true;
     }
@@ -33,7 +20,7 @@ export function containsIllegalfileNameChars(str) {
  * @param  boolean insertBefore [if true, inserts before parentNode children]
  * @return element [the element that was inserted into DOM]
  */
-export function injectDynamicImportHtmlIntoDom(args) {
+export function injectDynamicImportHtmlIntoDom(args: IDynamicImportHtml): HTMLElement {
     // 1. YOU CAN APPLY BINDINGS TO A FRESHLY INJECTED HTML BLOCK
     // WITHIN A NODE THAT HAD BINDINGS APPLIED
     // 2. YOU CANNOT INJECT HTML INTO AN EXISTING NODE AND APPLY BINDINGS
@@ -43,8 +30,8 @@ export function injectDynamicImportHtmlIntoDom(args) {
     // const frag = document.createRange().createContextualFragment(args.html);
     // cant use above cuz cant apply bindings to a fragment :(
 
-    const node = args.parentNode === void 0 ? document.body : args.parentNode;
-    const el = document.createElement('div');
+    const node: Element = args.parentNode === void 0 ? document.body : args.parentNode;
+    const el: HTMLDivElement = document.createElement('div');
 
     el.innerHTML = args.html;
 
@@ -56,11 +43,3 @@ export function injectDynamicImportHtmlIntoDom(args) {
 
     return el;
 }
-
-export function fetchComponent(module){
-    return Promise.all([
-        module.filePath(),
-        module.filePathTemplate()
-    ]);
-}
-export default 'noop';

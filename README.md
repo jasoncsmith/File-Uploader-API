@@ -12,12 +12,12 @@ A simple cross-browser file uploader API that removes the idiosyncrosies of the 
 6. Right click index.html and open with browser
 
 ## Features
+- Uses OWASP recommended DOMPurify library for DOM injection sanitization
 - Dynamically imported components
 - Allows unlimited interfaces per view
 - Drag/Drop
 - Single or Multiple File handling
 - Configurable
-- Uses OWASP recommended DOMPurify library for DOM injection sanitization
 - Creates a hoverable image preview of image files
 - Various File Validation
 
@@ -27,6 +27,10 @@ A simple cross-browser file uploader API that removes the idiosyncrosies of the 
 - File Name Illegal Characters
 - File Size
 - File Extension
+
+## Test File
+- Located here is a test file that you can use to simulate a file upload attack: https://github.com/jasoncsmith/File-Uploader-API/tree/main/docs/test-attack-file.txt
+- This test file has some DOM attacks as featured in the OWASP cheat sheet: https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html
 
 ## TODO:
 Do not allow queueing of same file

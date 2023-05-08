@@ -17,7 +17,7 @@ module.exports = {
     devtool: 'source-map', // ' A full SourceMap is emitted as a separate file. It adds a reference comment to the bundle so development tools know where to find it.'
 
     entry: {
-        app: './src/app.js'
+        app: './src/app.ts'
     },
 
     output: {
@@ -36,7 +36,7 @@ module.exports = {
 
     resolve: {
         modules: ['node_modules'],
-        extensions: ['.js', '.scss', '.ts'] //, '.jsx'
+        extensions: ['.ts', '.js', '.scss'] //, '.jsx'
     },
 
     optimization: {

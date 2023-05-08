@@ -1,0 +1,23 @@
+{
+  // babel without a preset or a plugin does nothing
+  // preset-env will download all necessary plugins
+  // however this can cause bloat, so to use this tell
+  // it which browsers you are supporting
+  // "browserslist": "latest" is defined in package.json
+
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          // "useBuiltIns": "usage" has been unreliable, wont take into account plugins/vendors.
+          "useBuiltIns": "entry", // means that at the entry to app you have to define your polyfills.
+          "corejs": "3.27"
+        }
+      ],
+      ["@babel/preset-typescript"]
+    ],
+    "plugins": [
+      "@babel/plugin-syntax-dynamic-import",
+      "@babel/plugin-transform-runtime" //verified needed for "useBuiltIns": "entry"
+    ]
+}
