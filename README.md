@@ -12,7 +12,7 @@ A simple cross-browser file uploader API that removes the idiosyncrosies of the 
 6. Right click index.html and open with browser
 
 ## To View
-copy and paste: https://jasoncsmith.github.io/File-Uploader-API/ into your favorite browser.
+Click the link: https://jasoncsmith.github.io/File-Uploader-API/.
 
 ## Features
 - Dynamically imported components
