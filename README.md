@@ -11,6 +11,9 @@ A simple cross-browser file uploader API that removes the idiosyncrosies of the 
 5. Command Prompt > npm run build
 6. Right click index.html and open with browser
 
+## To View
+Click the link: https://jasoncsmith.github.io/File-Uploader-API/.
+
 ## Features
 - Uses OWASP recommended DOMPurify library for DOM injection sanitization
 - Dynamically imported components
