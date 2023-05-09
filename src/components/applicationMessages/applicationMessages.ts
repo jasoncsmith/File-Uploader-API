@@ -1,8 +1,8 @@
-import './applicationMessages.scss';
+import "./applicationMessages.scss";
 
 interface IMessageOptions {
-    type: 'string';
-    content: 'string';
+    type: "string";
+    content: "string";
     isPersistant?: boolean;
     duration?: number;
 }
@@ -10,19 +10,19 @@ interface IMessageOptions {
 interface IMessage {
     type: KnockoutObservable<string>;
     content: KnockoutObservable<string>;
-    removedAnimation: KnockoutObservable<boolean>
+    removedAnimation: KnockoutObservable<boolean>;
 }
 
 const AppMessaging = function () {
     const messages: KnockoutObservableArray<IMessage> = ko.observableArray([]);
-    const duration: number = 5000;
+    const duration = 5000;
     const kp: KnockoutPostBox = ko.postbox;
 
     function create(options: IMessageOptions): IMessage {
         return {
             type: ko.observable(`message--is-${options.type}`),
-            content: ko.observable(options.content || ''),
-            removedAnimation: ko.observable(true).extend({ notify: 'always' })
+            content: ko.observable(options.content || ""),
+            removedAnimation: ko.observable(true).extend({ notify: "always" }),
         };
     }
 
@@ -41,14 +41,17 @@ const AppMessaging = function () {
         messages.push(newMessage);
 
         if (!options.isPersistant) {
-            setTimeout(remove.bind(null, newMessage), options.duration || duration);
+            setTimeout(
+                remove.bind(null, newMessage),
+                options.duration || duration
+            );
         }
     }
 
     function initialize(): void {
-        kp.subscribe('add-application-message', add);
-        kp.subscribe('remove-application-message', remove);
-        kp.subscribe('clear-application-message', clear);
+        kp.subscribe("add-application-message", add);
+        kp.subscribe("remove-application-message", remove);
+        kp.subscribe("clear-application-message", clear);
     }
 
     function destroy(): void {
@@ -61,7 +64,7 @@ const AppMessaging = function () {
         remove,
         add,
         initialize,
-        destroy
+        destroy,
     };
 };
 

@@ -1,54 +1,8 @@
+/* eslint-env node */
 {
-  "root": true, // tells eslint to only look in this dir (root)
-  "extends": [
-    "eslint:recommended", // eslint configures, non-custom
-    "plugin:import/errors",
-    "plugin:import/warnings"
-  ],
-  "parser": "@babel/eslint-parser", // to resolve dynamic import no-support
-  "parserOptions": {
-    "requireConfigFile": false,
-    "sourceType": "module",
-    "ecmaVersion": 8,
-    "ecmaFeatures": {
-      "experimentalObjectRestSpread": true
-    }
-  },
-  "env": {
-    "browser": true,
-    "node": true,
-    "jest": false
-  },
-  "rules": {
-    // 0: off, 1: warning, 2: error
-    // EVENTUALLY TURN OFF RECOMMENDED AND ADD ALL RULES HERE
-    "import/no-named-as-default-member": 2,
-    "import/no-named-as-default": 2,
-    "no-undef": 2, // undefined variables in code
-    "no-undefined": 2, // comparisons to undefined
-    "no-unused-vars": 1,
-    "no-unreachable": 1,
-    "no-extra-semi": 1,
-    "semi": 1,
-    "no-mixed-spaces-and-tabs": 1,
-    "no-useless-escape": 1,
-    "no-console": 0,
-    "no-extra-boolean-cast": 0,
-    "import/namespace": "off",
-    "import/default": "off"
-  },
-  "globals": {
-    "ko": "readonly",
-    "$": "readonly",
-    "Promise": "readonly",
-    "google": "readonly",
-    "tableau": "readonly",
-    "OverlappingMarkerSpiderfier": "readonly"
-  },
-  "ignorePatterns": [
-    "temp.js",
-    "**/vendor/*.js",
-    "**/dist/*",
-    "*.test.js"
-  ]
+    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "root": true,
+    "ignorePatterns": ["dist/*", "build/*", "webpack.config.js"]
 }

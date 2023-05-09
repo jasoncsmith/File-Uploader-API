@@ -1,15 +1,9 @@
-import './fileUploader.scss';
-import {
-    containsIllegalfileNameChars
-} from '../../utils/utils.ts';
-import {
-    objMerge
-} from '../../utils/utilsObjects.ts';
-import {
-    formatBytes
-} from '../../utils/utilsNumber.ts';
-import DOMPurify from 'dompurify';
-import { IFileUploaderOptions } from "../interfaces.ts";
+import "./fileUploader.scss";
+import { containsIllegalfileNameChars } from "../../utils/utils.ts";
+import { objMerge } from "../../utils/utilsObjects.ts";
+import { formatBytes } from "../../utils/utilsNumber.ts";
+import DOMPurify from "dompurify";
+import { IFileUploaderOptions, IjFile } from "../interfaces.ts";
 // const hashSupportedExtToMIMEImage = {
 //     jpg: 'image/jpeg',
 //     jpeg: 'image/jpeg',
@@ -22,20 +16,20 @@ import { IFileUploaderOptions } from "../interfaces.ts";
 // };
 
 const whiteList: string[] = [];
-const maxFileNameChars: number = 120;
-let countInitializedInstances: number = 0; // when > 1 fileUploaders on same page
+const maxFileNameChars = 120;
+let countInitializedInstances = 0; // when > 1 fileUploaders on same page
 
 interface ResultFileSanitization {
-    isValid: boolean,
-    foundLength: number
+    isValid: boolean;
+    foundLength: number;
 }
 
-class jFile  {
+class jFile implements IjFile {
     filename: string;
     totalfilesize: number;
     file: File;
 
-    constructor (file:File) {
+    constructor(file: File) {
         this.filename = file.name;
         this.totalfilesize = file.size;
         this.file = file;
@@ -47,7 +41,7 @@ class FileListItem {
     src: string | null;
     size: string;
 
-    constructor (file: File) {
+    constructor(file: File) {
         this.fileName = file.name;
         this.src = null;
         this.size = formatBytes(file.size);
@@ -62,22 +56,26 @@ class Vm {
     private elFileInput: HTMLInputElement | null = null;
 
     private queuedFileTransfers: Array<jFile> = [];
-    private allowedFileTypes: string = '*';
+    private allowedFileTypes = "*";
 
-    private configApi: Function | null = null;
-    private configMultiple: boolean = false;
+    private configApi: (a: object) => jFile | null = null;
+    private configMultiple = false;
     private configValidateContent: boolean | null = false;
     private configMaxFileSize: number | null = null;
     private configAllowedFileExtensions: string[] = [];
 
-    fileListItems: KnockoutObservableArray<FileListItem> = ko.observableArray([]);
-    isFileReadyForUpload: KnockoutObservable<boolean> = ko.observable(false).extend({
-        notify: 'always'
-    });
+    fileListItems: KnockoutObservableArray<FileListItem> = ko.observableArray(
+        []
+    );
+    isFileReadyForUpload: KnockoutObservable<boolean> = ko
+        .observable(false)
+        .extend({
+            notify: "always",
+        });
     selectedFileName: KnockoutObservable<string | null> = ko.observable(null);
-    elemIdFileInput: KnockoutObservable<string> = ko.observable('');
-    textButton: KnockoutObservable<string>  = ko.observable(null);
-    textLabel: KnockoutObservable<string>  = ko.observable(null);
+    elemIdFileInput: KnockoutObservable<string> = ko.observable("");
+    textButton: KnockoutObservable<string> = ko.observable(null);
+    textLabel: KnockoutObservable<string> = ko.observable(null);
     textAllowedExt: KnockoutObservable<string> = ko.observable(null);
     isWaiting: KnockoutObservable<boolean> = ko.observable(false);
 
@@ -91,19 +89,31 @@ class Vm {
     }
 
     private highlight(): void {
-        this.elDropArea && this.elDropArea.classList.add('file-upload__drop-area--is-dragover');
+        this.elDropArea &&
+            this.elDropArea.classList.add(
+                "file-upload__drop-area--is-dragover"
+            );
     }
 
     private unhighlight(): void {
-        this.elDropArea && this.elDropArea.classList.remove('file-upload__drop-area--is-dragover');
+        this.elDropArea &&
+            this.elDropArea.classList.remove(
+                "file-upload__drop-area--is-dragover"
+            );
     }
 
     private validateFileSize(args: File): boolean {
-        return this.configMaxFileSize === null ? true : args.size <= this.configMaxFileSize;
+        return this.configMaxFileSize === null
+            ? true
+            : args.size <= this.configMaxFileSize;
     }
 
-    private validateFileExtension(extension:string): boolean {
-        return this.configAllowedFileExtensions.length === 0 ? true : this.configAllowedFileExtensions.indexOf(extension.toLowerCase()) !== -1;
+    private validateFileExtension(extension: string): boolean {
+        return this.configAllowedFileExtensions.length === 0
+            ? true
+            : this.configAllowedFileExtensions.indexOf(
+                  extension.toLowerCase()
+              ) !== -1;
     }
 
     private validateFileNameIllegalChars(args: File): boolean {
@@ -120,29 +130,34 @@ class Vm {
         return new Promise((resolve, reject) => {
             reader.onloadend = function (e: ProgressEvent<FileReader>) {
                 const readerResult = <string>e.target.result;
-                let totalWhiteList: number = 0;
-                
+                let totalWhiteList = 0;
+
                 DOMPurify.sanitize(readerResult);
                 const violations = DOMPurify.removed;
                 // IF SANITIZED != READERRESULT AND VIOLATIONS.LENGTH > 0
                 // THIS MEANS DOMPURIFY ESCAPED CONTENT -- WE ARE NOT CONCERNED
                 // WITH THIS.
-    
+
                 for (let i = 0, len = whiteList.length; i < len; i++) {
-                    totalWhiteList += (readerResult.match(new RegExp(whiteList[i], 'gi')) || []).length;
+                    totalWhiteList += (
+                        readerResult.match(new RegExp(whiteList[i], "gi")) || []
+                    ).length;
                 }
-               
+
                 resolve({
-                    isValid: violations.length === 0 || (violations.length > 0 && totalWhiteList === violations.length),
-                    foundLength: Math.abs(violations.length - totalWhiteList)
+                    isValid:
+                        violations.length === 0 ||
+                        (violations.length > 0 &&
+                            totalWhiteList === violations.length),
+                    foundLength: Math.abs(violations.length - totalWhiteList),
                 });
             };
-            reader.onerror = (err) => {
+            reader.onerror = () => {
                 reader.abort();
-                reject('There was an error reading the file.');
-            }
-            reader.readAsText(args);    
-        })
+                reject("There was an error reading the file.");
+            };
+            reader.readAsText(args);
+        });
     }
 
     private async validate(file: File): Promise<boolean> {
@@ -155,8 +170,8 @@ class Vm {
         if (this.validateFileExtension(ext) === false) {
             this.notifyValidationFailuresExtension(ext);
             return false;
-        }    
-        
+        }
+
         if (this.validateFileNameLength(file) === false) {
             this.notifyValidationFailuresFileNameLength();
             return false;
@@ -167,8 +182,9 @@ class Vm {
             return false;
         }
 
-        if (this.configValidateContent === true && file.type === 'text/plain') {
-            const result: ResultFileSanitization = await this.validateFileContent(file);
+        if (this.configValidateContent === true && file.type === "text/plain") {
+            const result: ResultFileSanitization =
+                await this.validateFileContent(file);
 
             if (result.isValid === false) {
                 this.notifyValidationFailuresContent(result.foundLength);
@@ -181,79 +197,85 @@ class Vm {
         return true;
     }
 
-    private notifyValidationFailuresSizeLimit(args: {
-        name: string
-    }): void {
-        this.kp.publish('add-application-message', {
-            type: 'invalid',
-            content: `File <strong>${args.name}</strong> exceeds the <strong>${formatBytes(this.configMaxFileSize)}</strong> size limit and will not be uploaded.`,
-            isPersistant: true
+    private notifyValidationFailuresSizeLimit(args: { name: string }): void {
+        this.kp.publish("add-application-message", {
+            type: "invalid",
+            content: `File <strong>${
+                args.name
+            }</strong> exceeds the <strong>${formatBytes(
+                this.configMaxFileSize
+            )}</strong> size limit and will not be uploaded.`,
+            isPersistant: true,
         });
     }
 
     private notifyValidationFailuresExtension(ext: string): void {
-        this.kp.publish('add-application-message', {
-            type: 'invalid',
-            content: `File type <strong>${ext}</strong> is not permitted, only <strong>${this.configAllowedFileExtensions.join(', ')}</strong> are accepted.`,
-            isPersistant: true
+        this.kp.publish("add-application-message", {
+            type: "invalid",
+            content: `File type <strong>${ext}</strong> is not permitted, only <strong>${this.configAllowedFileExtensions.join(
+                ", "
+            )}</strong> are accepted.`,
+            isPersistant: true,
         });
     }
 
-    private notifyValidationFailuresFileName(args: {name: string}): void {
-        this.kp.publish('add-application-message', {
-            type: 'invalid',
+    private notifyValidationFailuresFileName(args: { name: string }): void {
+        this.kp.publish("add-application-message", {
+            type: "invalid",
             content: `Please rename file <strong>${args.name}</strong>. Filenames cannot contain <strong>\\ / : * ? " < > |</strong>`,
-            isPersistant: true
+            isPersistant: true,
         });
     }
 
     private notifyValidationFailuresFileNameLength(): void {
-        this.kp.publish('add-application-message', {
-            type: 'invalid',
+        this.kp.publish("add-application-message", {
+            type: "invalid",
             content: `File name cannot exceed <strong>${maxFileNameChars}</strong> characters in length. Please shorten the file name.`,
-            isPersistant: true
+            isPersistant: true,
         });
     }
 
     private notifyValidationFailuresContent(foundLength: number): void {
-        this.kp.publish('add-application-message', {
-            type: 'invalid',
-            content: `We have detected <strong>${foundLength} issue${foundLength === 1 ? '' : 's'}</strong> with this file. Upload Blocked.`,
-            isPersistant: true
+        this.kp.publish("add-application-message", {
+            type: "invalid",
+            content: `We have detected <strong>${foundLength} issue${
+                foundLength === 1 ? "" : "s"
+            }</strong> with this file. Upload Blocked.`,
+            isPersistant: true,
         });
     }
 
     private notifyValidationSuccessContent(): void {
-        this.kp.publish('add-application-message', {
-            type: 'valid',
-            content: `Success. DOMPurify found 0 issues with this file`
+        this.kp.publish("add-application-message", {
+            type: "valid",
+            content: `Success. DOMPurify found 0 issues with this file`,
         });
     }
 
     private getFileExtension(args: File): string {
-        if (typeof args.name !== 'string') {
-            throw new Error('fileName must be a string');
+        if (typeof args.name !== "string") {
+            throw new Error("fileName must be a string");
         }
 
         const fileName: string = args.name;
-        const index: number = fileName.lastIndexOf('.');
+        const index: number = fileName.lastIndexOf(".");
 
         if (index === -1) {
-            return '';
+            return "";
         }
 
         return `.${fileName.substring(index + 1, fileName.length)}`;
     }
-    
+
     // #FIX, the any
     private handleDrop = (e: any): void => {
         e.preventDefault();
         this.setFiles(e.dataTransfer.files);
-    }
+    };
 
-    private handleSubmit = (e: Event): void =>  {
+    private handleSubmit = (e: Event): void => {
         this.setFiles((<HTMLInputElement>e.target).files);
-    }
+    };
 
     /**
      * @param fileList input will be fileList or Event object
@@ -263,34 +285,35 @@ class Vm {
         if (input.length === 0) {
             return;
         }
-        
-        const filesRaw = this.configMultiple === false ? [input[0]] : [...input];
-        
+
+        const filesRaw =
+            this.configMultiple === false ? [input[0]] : [...input];
+
         if (this.elFileInput) {
-            this.elFileInput.value = ''; // WE HAVE TO KEEP IT EMPTY OR YOU CANNOT UPLOAD A FILE YOU DELETED. EVERYTHING IS MANAGED IN THE que
+            this.elFileInput.value = ""; // WE HAVE TO KEEP IT EMPTY OR YOU CANNOT UPLOAD A FILE YOU DELETED. EVERYTHING IS MANAGED IN THE que
         }
 
         if (this.configMultiple === false && input.length > 1) {
-            this.kp.publish('add-application-message', {
-                type: 'information',
-                content: `Only <strong>one file</strong> may be dropped at a time. <strong>${filesRaw[0].name}</strong> was accepted, the others have been removed.`
+            this.kp.publish("add-application-message", {
+                type: "information",
+                content: `Only <strong>one file</strong> may be dropped at a time. <strong>${filesRaw[0].name}</strong> was accepted, the others have been removed.`,
             });
         }
 
-        filesRaw.forEach(async (f:File) => {
-            if (await this.validate(f) === true) {
+        filesRaw.forEach(async (f: File) => {
+            if ((await this.validate(f)) === true) {
                 this.queueFileTransfers(f);
             }
         });
     }
 
     private queueFileTransfers(rawFile: File): void {
-         // will be the one that is dragged or the last one. Only wil truly work in case of single
+        // will be the one that is dragged or the last one. Only wil truly work in case of single
         this.selectedFileName(rawFile.name);
 
-        this.configMultiple === false ?
-            this.queuedFileTransfers = [new jFile(rawFile)] :
-            this.queuedFileTransfers.push(new jFile(rawFile));
+        this.configMultiple === false
+            ? (this.queuedFileTransfers = [new jFile(rawFile)])
+            : this.queuedFileTransfers.push(new jFile(rawFile));
 
         this.renderFileListItem(rawFile);
 
@@ -300,17 +323,19 @@ class Vm {
     private renderFileListItem(file: File): void {
         const listItem = new FileListItem(file);
 
-        if (file.type.includes('image/')) {
+        if (file.type.includes("image/")) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onloadend = (e: ProgressEvent<FileReader>) => {
                 listItem.src = <string>e.target.result;
-                this.configMultiple === false ? this.fileListItems([listItem]) :
-                    this.fileListItems.push(listItem);
+                this.configMultiple === false
+                    ? this.fileListItems([listItem])
+                    : this.fileListItems.push(listItem);
             };
         } else {
-            this.configMultiple === false ? this.fileListItems([listItem]) :
-                this.fileListItems.push(listItem);
+            this.configMultiple === false
+                ? this.fileListItems([listItem])
+                : this.fileListItems.push(listItem);
         }
     }
 
@@ -319,55 +344,68 @@ class Vm {
             return;
         }
 
-        this.elDropArea = el.querySelector('.file-upload__drop-area');
-        this.elFileInput = el.querySelector('.file-upload__input-file');
+        this.elDropArea = el.querySelector(".file-upload__drop-area");
+        this.elFileInput = el.querySelector(".file-upload__input-file");
 
         if (this.elDropArea === null || !this.elFileInput === null) {
-            throw new Error('Elements required.');
+            throw new Error("Elements required.");
         }
 
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            this.elDropArea.addEventListener(eventName, this.preventDefaults, false);
+        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+            this.elDropArea.addEventListener(
+                eventName,
+                this.preventDefaults,
+                false
+            );
         });
 
-        ['dragenter', 'dragover'].forEach(eventName => {
+        ["dragenter", "dragover"].forEach((eventName) => {
             this.elDropArea.addEventListener(eventName, this.highlight, false);
         });
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            this.elDropArea.addEventListener(eventName, this.unhighlight, false);
+        ["dragleave", "drop"].forEach((eventName) => {
+            this.elDropArea.addEventListener(
+                eventName,
+                this.unhighlight,
+                false
+            );
         });
 
-        this.elDropArea.addEventListener('drop', this.handleDrop, false);
+        this.elDropArea.addEventListener("drop", this.handleDrop, false);
 
-        this.elDropArea.addEventListener('input', this.handleSubmit, false);
+        this.elDropArea.addEventListener("input", this.handleSubmit, false);
 
         if (this.configMultiple === true) {
-            this.elFileInput.setAttribute('multiple', 'multiple');
+            this.elFileInput.setAttribute("multiple", "multiple");
         }
 
         if (this.configAllowedFileExtensions.length > 0) {
-            this.allowedFileTypes = this.configAllowedFileExtensions.join(',');
+            this.allowedFileTypes = this.configAllowedFileExtensions.join(",");
         }
 
-        this.elFileInput.setAttribute('accept', `${this.allowedFileTypes}`);
+        this.elFileInput.setAttribute("accept", `${this.allowedFileTypes}`);
     }
 
     private notifySuccess(args: jFile): void {
-        this.kp.publish('add-application-message', {
-            type: 'valid',
-            content: `File ${args.filename} has been uploaded successfully`
-        });        
+        this.kp.publish("add-application-message", {
+            type: "valid",
+            content: `File ${args.filename} has been uploaded successfully`,
+        });
     }
 
-    public deleteQueuedFile = (obj:FileListItem): void => {
-        const qf = this.queuedFileTransfers.find(f => f.filename === obj.fileName);
+    public deleteQueuedFile = (obj: FileListItem): void => {
+        const qf = this.queuedFileTransfers.find(
+            (f) => f.filename === obj.fileName
+        );
 
-        if (typeof qf === 'undefined') {
-            throw new Error('queued file transfer not found.');
+        if (typeof qf === "undefined") {
+            throw new Error("queued file transfer not found.");
         }
 
-        this.queuedFileTransfers.splice(this.queuedFileTransfers.indexOf(qf), 1);
+        this.queuedFileTransfers.splice(
+            this.queuedFileTransfers.indexOf(qf),
+            1
+        );
 
         this.fileListItems.remove(obj);
 
@@ -391,32 +429,32 @@ class Vm {
         this.isWaiting(false);
     };
 
-    public uploadFile = (): Promise<void> =>{
+    public uploadFile = (): Promise<void> => {
         const uploads: Array<jFile> = [];
 
         if (this.queuedFileTransfers.length === 0) {
-            return Promise.reject('Please select a file to upload.');
+            return Promise.reject("Please select a file to upload.");
         }
 
-        this.queuedFileTransfers.forEach(
-            ft => uploads.push(this.configApi(objMerge({}, ft)))
+        this.queuedFileTransfers.forEach((ft: jFile) =>
+            uploads.push(this.configApi(objMerge({}, ft)))
         );
 
         this.isWaiting(true);
 
         return Promise.all(uploads)
-            .then(resp => resp.forEach((f) => this.notifySuccess(f)))
-            .catch(err => {
-                this.kp.publish('add-application-message', {
-                    type: 'invalid',
-                    content: err
+            .then((resp) => resp.forEach((f) => this.notifySuccess(f)))
+            .catch((err) => {
+                this.kp.publish("add-application-message", {
+                    type: "invalid",
+                    content: err,
                 });
                 this.isWaiting(false);
             })
             .finally(this.reset);
     };
 
-    public initialize (args: IFileUploaderOptions): void {
+    public initialize(args: IFileUploaderOptions): void {
         this.configApi = args.endpoint;
         this.configMultiple = args.allowsMultiple;
         this.configMaxFileSize = args.maxFileSize;
@@ -424,15 +462,21 @@ class Vm {
         this.configAllowedFileExtensions = args.allowedExtensions || [];
 
         this.textLabel(args.labelText);
-        this.textButton(this.configMultiple === true ? `${args.labelButton}(s)` : args.labelButton);
+        this.textButton(
+            this.configMultiple === true
+                ? `${args.labelButton}(s)`
+                : args.labelButton
+        );
         this.elemIdFileInput(`file-elem-${countInitializedInstances}`);
 
         if (this.configAllowedFileExtensions.length > 0) {
-            this.textAllowedExt(`Accepted: ${this.configAllowedFileExtensions.join(', ')}`);
+            this.textAllowedExt(
+                `Accepted: ${this.configAllowedFileExtensions.join(", ")}`
+            );
         }
 
         this.setDom(args.el);
-    };
+    }
 }
 
 export default Vm;

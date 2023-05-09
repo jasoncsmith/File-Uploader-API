@@ -1,19 +1,25 @@
+export interface IjFile {
+    filename: string;
+    totalfilesize: number;
+    file: File;
+}
+
 export interface IFileUploaderOptions {
-    el: Element,
-    endpoint: Function,
-    allowsMultiple: boolean,
-    allowedExtensions: string[],
-    maxFileSize: number,
-    labelText: string,
-    labelButton: string,
-    validatePlainTextContent: boolean   
+    el: Element;
+    endpoint: (a: object) => IjFile;
+    allowsMultiple: boolean;
+    allowedExtensions: string[];
+    maxFileSize: number;
+    labelText: string;
+    labelButton: string;
+    validatePlainTextContent: boolean;
 }
 
 export interface IDynamicImportHtml {
-    html: string,
-    element: Element,
-    parentNode?: Element,
-    insertBefore: boolean
+    html: string;
+    element: Element;
+    parentNode?: Element;
+    insertBefore: boolean;
 }
 
 // read
