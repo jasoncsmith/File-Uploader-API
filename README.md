@@ -1,5 +1,4 @@
 # File Uploader Api
-
 A simple cross-browser native JavaScript file uploader API that removes the idiosyncrosies of the file input element. 
 
 ## To Run
