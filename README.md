@@ -1,7 +1,6 @@
-# file-uploader-api
-File Uploader Api
+# File Uploader Api
 
-A simple cross-browser file uploader API that removes the idiosyncrosies of the file input element. 
+A simple cross-browser native JavaScript file uploader API that removes the idiosyncrosies of the file input element. 
 
 ## To Run
 1. Install Node.js
